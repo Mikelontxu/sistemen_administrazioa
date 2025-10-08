@@ -20,3 +20,12 @@ include_dir /etc/mosquitto/conf.d
 • Permitir conexiones al puerto 1883 desde fuera del servidor
 listener 1883 0.0.0.0
 allow_anonymous true
+
+EJERCICIO DE EJEMPLO EXAMEN 2
+sudo mkdir -p /miVolumen
+dd if=/dev/urandom of=/miVolumen/archivo_aleatorio.bin bs=1M count=50
+
+if=/dev/urandom: Fuente de datos aleatorios.
+of=/miVolumen/archivo_aleatorio.bin: Ruta del archivo a crear.
+bs=1M: Tamaño del bloque = 1 megabyte.
+count=50: Número de bloques = 50 → Total = 50 MB.
