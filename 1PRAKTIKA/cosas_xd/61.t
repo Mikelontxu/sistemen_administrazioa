@@ -1,0 +1,1 @@
+	      verbose -l, vertical -C

@@ -1,0 +1,61 @@
+/////////////// 1 ARIKETA ///////////////
+  719  lsblk -e7
+  720  cfdisk
+  721  sudo cfdisk /dev/sdb
+  722  lsblk -e7
+
+/////////////// 3 ARIKETA ///////////////
+  728  sudo pvcreate /dev/sdb1 /dev/sdb2 /dev/sdc1
+  729  sudo vgcreate miGrupoLVM /dev/sdb1 /dev/sdb2 /dev/sdc1
+  730  vgdisplay miGrupoLVM
+  731  sudo vgdisplay miGrupoLVM
+  732  sudo lvcreate -l 100%FREE -n miVolumen miGrupoLVM
+  733  lvdisplay /dev/miGrupoLVM/miVolumen
+  734  sudo lvdisplay /dev/miGrupoLVM/miVolumen
+  735  sudo mkfs.ext4 /dev/miGrupoLVM/miVolumen
+/////////////// 4 ARIKETA ///////////////
+  736  sudo mkdir /mnt/miVolumen
+  737  sudo mount /dev/miGrupoLVM/miVolumen /mnt/miVolumen
+  738  sudo cp -a /etc /mnt/miVolumen/
+  739  ls /mnt/miVolumen/etc
+/////////////// 5 ARIKETA ///////////////
+  741  sudo pvcreate /dev/sdc2
+  742  sudo vgextend miGrupoLVM /dev/sdc2
+  743  sudo lvextend -l +100%FREE /dev/miGrupoLVM/miVolumen
+  744  sudo resize2fs /dev/miGrupoLVM/miVolumen
+  745  ls /mnt/miVolumen/etc
+  746  df -h /mnt/miVolumen
+/////////////// 6 ARIKETA ///////////////
+  748  sudo umount /dev/miGrupoLVM/miVolumen
+  749  sudo lvremove /dev/miGrupoLVM/miVolumen
+/////////////// 7 ARIKETA ///////////////
+  751  sudo apt update
+  752  sudo apt install mdadm -y
+  753  sudo mdadm --create --verbose /dev/md0 --level=5 --raid-devices=3 /dev/sdb1 /dev/sdb2 /dev/sdb3
+  754  lsblk -e7
+  755  sudo mdadm --create --verbose /dev/md0 --level=5 --raid-devices=3 /dev/sdb1 /dev/sdb2 /dev/sdc1
+  756  cat /proc/mdstat
+  757  sudo mkfs.ext4 /dev/md0
+  758  sudo mkdir /mnt/raid5
+  759  sudo mount /dev/md0 /mnt/raid5
+  760  sudo rsync -aAXv /var/ /mnt/raid5/
+  761  ls /mnt/raid5
+  762  ls /var
+/////////////// 8 ARIKETA ///////////////
+  764  sudo mdadm /dev/md0 --fail /dev/sdc1
+  765  cat /proc/mdstat
+  766  sudo mdadm --detail /dev/md0
+  767  sudo mdadm /dev/md0 --remove /dev/sdc1
+  768  sudo mdadm /dev/md0 --add /dev/sdc2
+  769  cat /proc/mdstat
+  770  sudo mdadm --detail /dev/md0
+  771  cat /proc/mdstat
+/////////////// 9 ARIKETA ///////////////
+  773  sudo umount /mnt/raid5
+  774  sudo mdadm --stop /dev/md0
+  775  cat /proc/mdstat
+  776  sudo mdadm --zero-superblock /dev/sdb1
+  777  sudo mdadm --zero-superblock /dev/sdb2
+  778  sudo mdadm --zero-superblock /dev/sdc1
+  779  sudo mdadm --zero-superblock /dev/sdc2
+

@@ -1,0 +1,89 @@
+//////////////// 1 ARIKETA: //////////////// 
+sudo mkfs.ext3 /dev/sdb1
+sudo mkfs.btrfs /dev/sdb2
+sudo mkfs.xfs /dev/sdb3
+sudo mkfs.ext4 /dev/sdb4
+
+//////////////// 2 ARIKETA: //////////////// 
+sudo blkid /dev/sdb1
+sudo vim /etc/fstab
+
+cat /etc/fstab
+
+LABEL=cloudimg-rootfs	/	 ext4	discard,commit=30,errors=remount-ro	0 1
+LABEL=BOOT	/boot	ext4	defaults	0 2
+LABEL=UEFI	/boot/efi	vfat	umask=0077	0 1
+UUID=ccae0545-6a0a-4746-ac5c-ee79098a95c2 /mnt/disks/disco1 ext3 discard,defaults,nofail 0 2
+UUID=3bfc4e82-7e48-4a36-b50a-bff2e9e2b5d2 /mnt/disks/disco2 btrfs discard,defaults,nofail 0 2
+UUID=a26de05e-7697-4a4f-a304-1cd8c6b76394 /mnt/disks/disco3 xfs discard,defaults,nofail 0 2
+UUID=12de14ff-be7a-4a99-9309-9ed6eb56a348 /mnt/disks/disco4 ext4 discard,defaults,nofail 0 2
+
+//////////////// 3. ARIKETA: //////////////// 
+
+cd mnt
+sudo mkdir disks
+cd disks/
+sudo mkdir disco1
+sudo mkdir disco2
+sudo mkdir disco3
+sudo mkdir disco4
+sudo mount /dev/sdb1 disco1
+sudo mount /dev/sdb2 disco2
+sudo mount /dev/sdb3 disco3
+sudo mount /dev/sdb4 disco4
+df -hT
+
+/dev/sdb1      ext3      975M   60K  924M   1% /mnt/disks/disco1
+/dev/sdb2      btrfs     1.0G  5.8M  905M   1% /mnt/disks/disco2
+/dev/sdb3      xfs       960M   51M  910M   6% /mnt/disks/disco3
+/dev/sdb4      ext4      974M   24K  907M   1% /mnt/disks/disco4
+
+BFRTS DA GEHIEN META-INFORMAZIOA ERABILTZEN DUENA:
+
+//////////////// 4. ARIKETA: //////////////// 
+
+ext4 puede montar ext3/ext2 → retrocompatibilidad.
+
+ext3 no siempre puede montar ext4 → solo si no se han activado las nuevas funciones de ext4.
+La diferencia principal es que ext4 añade extents, mayor tamaño de volumen y fichero, journaling más avanzado, checksums, etc., que ext3 no entiende.
+
+//////////////// 5. ARIKETA: //////////////// 
+
+sudo cfdisk /dev/sdb
+sudo mkfs.ext4 /dev/sdb2
+sudo mkdir ext4_var
+sudo mount /dev/sdb2 ext4_var/
+lsblk -e7
+sudo rsync -avx /var/ /mnt/disks/ext4_var/
+mikel@machine:/mnt/disks$ df -hT
+Filesystem     Type      Size  Used Avail Use% Mounted on
+/dev/root      ext4       19G  3.1G   16G  17% /
+tmpfs          tmpfs     983M     0  983M   0% /dev/shm
+tmpfs          tmpfs     393M  956K  393M   1% /run
+tmpfs          tmpfs     5.0M     0  5.0M   0% /run/lock
+efivarfs       efivarfs   56K   24K   27K  48% /sys/firmware/efi/efivars
+/dev/sda16     ext4      881M   63M  757M   8% /boot
+/dev/sda15     vfat      105M  6.2M   99M   6% /boot/efi
+tmpfs          tmpfs     197M   12K  197M   1% /run/user/1001
+/dev/sdb2      ext4      7.8G  2.7G  4.8G  36% /mnt/disks/ext4_var
+sudo umount /dev/sdb2
+
+//////////////// 6. ARIKETA: ////////////////
+  700  cfdisk
+  701  lsblk -e7
+  702  sudo mount /dev/sdb2 /mnt/nueva_var
+  703  mkdir /mnt/nueva_var
+  704  sudo mkdir /mnt/nueva_var
+  705  sudo mount /dev/sdb2 /mnt/nueva_var
+  706  sudo rsync -aAXv /var/ /mnt/nueva_var/
+  707  sudo diff -r /var /mnt/nueva_var
+  708  ls -l /mnt/nueva_var/
+  709  ls -l /var
+  710  sudo e2fsck -f /dev/sdb2
+  711  sudo umount /mnt/nueva_var
+  713  sudo e2fsck -f /dev/sdb2
+  714  sudo resize2fs -M /dev/sdb2
+  716  sudo dumpe2fs /dev/sdb2 | grep -i 'block count\|block size'
+//////////////// 7. ARIKETA: ////////////////
+  717  sudo vim /etc/fstab
+sudo umount /dev/sdXn

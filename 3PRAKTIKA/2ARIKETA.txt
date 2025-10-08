@@ -1,0 +1,58 @@
+//////////////// 1 ARIKETA ////////////////
+  620  man logger
+  621  logger -p user.err "Lol"
+Se usa la -p para indicar prioridades a los mensajes.
+//////////////// 2 ARIKETA ////////////////
+  623  logger "Hola Mundo de Logs"
+  624  tail -n 20 /var/log/syslog
+2025-10-07T21:55:43.247619+00:00 machine mikel: Hola Mundo de Logs
+//////////////// 3 ARIKETA ////////////////
+  626  sudo touch /var/log/ssh.log
+  627  sudo chmod 640 /var/log/ssh.log
+  628  sudo chown syslog:mikel /var/log/ssh.log 
+  629  sudo nano /etc/rsyslog.d/10-sshd-debug.conf
+--> if ($programname == 'sshd') and ($syslogseverity-text == 'debug') then /var/log/ssh.log & stop
+  630  sudo systemctl restart rsyslog
+  631  sudo nano /etc/ssh/sshd_config
+--> LogLevel DEBUG
+  632  sudo sshd -t
+  636  sudo systemctl status ssh
+  640  sudo tail -f /var/log/ssh.log
+//////////////// 4 ARIKETA ////////////////
+  642  sudo mkdir -p /var/log/syslog.old
+  643  sudo chown syslog:mikel /var/log/syslog.old
+  644  sudo chmod 750 /var/log/syslog.old
+  645  sudo nano /etc/logrotate.d/syslog-monthly
+  646  sudo logrotate -f /etc/logrotate.d/syslog-monthly
+  647  ls -lh /var/log/syslog.old/
+  648  sudo logrotate -f /etc/logrotate.d/syslog-monthly
+  649  sudo chmod 755 /var/log
+  650  sudo chown root:root /var/log
+  651  sudo logrotate -f /etc/logrotate.d/syslog-monthly
+  652  ls -lh /var/log/syslog.old/
+
+script syslog-monthly:
+/var/log/syslog {
+    monthly
+    rotate 12
+    compress
+    missingok
+    notifempty
+    create 640 syslog adm
+    olddir /var/log/syslog.old
+    dateext
+    dateformat -%Y-%m
+    sharedscripts
+    postrotate
+        /usr/lib/rsyslog/rsyslog-rotate || true
+    endscript
+}
+monthly		Rota el log una vez al mes.
+rotate 12	Guarda los últimos 12 archivos rotados (1 año).
+compress	Comprime los archivos viejos (gzip por defecto).
+missingok	No falla si el log no existe.
+notifempty	No rota si el log está vacío.
+create 640 syslog adm	Crea el nuevo log con permisos adecuados.
+olddir	Mueve los logs rotados a /var/log/syslog.old.
+dateext y dateformat	Añade fecha al archivo rotado (ej: syslog-2025-10.gz)
+postrotate	Comando a ejecutar después de rotar (reinicia el log en rsyslog).

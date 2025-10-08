@@ -1,0 +1,60 @@
+////////////// 1 ARIKETA //////////////
+  523  ps -e --no-headers
+  524  ps -e | wc -l
+////////////// 2 ARIKETA //////////////
+  526  ps -U root | wc -l
+////////////// 3 ARIKETA //////////////
+  528  sudo apt update
+  529  sudo apt install stress-ng
+  530  stress-ng --cpu 1 --timeout 20s
+////////////// 4 ARIKETA //////////////
+  532  stress-ng --cpu 1  &
+  536  top
+  537  pidof stress-ng
+  538  top
+  539  kill -SIGSTOP 2563
+  540  top
+  541  kill -SIGCONT 2563
+  542  top
+  543  sudo renice 19 -p 2563
+  544  top
+  545  kill 2563
+  546  top
+////////////// 5 ARIKETA //////////////
+  548  ps -eo pid,ni,pri,comm --sort=-pri | head
+////////////// 6 ARIKETA //////////////
+  550  sudo nano /etc/security/limits.conf
+* hard cpu 5
+////////////// 7 ARIKETA //////////////
+  553  sudo crontab -e
+# a) Ejecutar el comando date cada minuto y añadir la salida a /tmp/date.log
+* * * * * /bin/date >> /tmp/date.log
+
+# b) Borrar el contenido de /tmp a las 17:00 durante los primeros 5 días de cada mes
+0 17 1-5 * * /bin/rm -rf /tmp/*
+////////////// 8 ARIKETA //////////////
+  607  cat /tmp/date.log
+  608  sudo crontab -e
+////////////// 9 ARIKETA //////////////
+HOST:
+  610  nc -l -p 3000
+	Hola A
+USER:
+ 1997  nc 34.51.176.148 3000
+	Hola B
+////////////// 10 ARIKETA //////////////
+HOST:
+  612  nc -l 3000 > /dev/null
+USER:
+ 2000  dd if=/dev/urandom bs=1M | nc 34.51.176.148 3000
+
+Los valores no coinciden pero son muy similares por culpa de TCP (headers,buffers..)
+////////////// 11 ARIKETA //////////////
+HOST:
+  617  nc -l 3000 > recibidolorandomxd.txt
+  618  cat recibidolorandomxd.txt 
+USER:
+ 2002  head -c 1M /dev/urandom | base64 > randomxddxdxd.txt
+ 2003  nc 34.51.176.148 3000 < randomxddxdxd.txt
+
+SCP usa cifrado SSH, tiene autentificación, tambien es facil y simple con SSH, garantiza entrega, multiarchivo. Mientras que Netcat (nc) solo es simple y ya.

@@ -1,0 +1,176 @@
+//////////////// 4 MAQUINA VIRTUAL: ////////////////
+    5  sudo apt update
+    6  sudo apt install nfs-common
+    7  vim
+    8  sudo apt install vim
+    9  sudo mkdir -p /tmp/carpetaRemota
+   10  sudo mount -t nfs 34.51.169.128:/etc/datosNfs /tmp/carpetaRemota/
+   11  df -h
+   13  cd /tmp/carpetaRemota/
+   14  ls
+   15  cd ..
+   16  cd etc
+   17  sudo mkdir miWeb
+   18  cd miWeb/
+   19  sudo vim index.html
+   20  sudo python3 -m http.server 80
+   21  cd
+   22  cd etc
+   23  cd /etc
+   24  sudo mkdir miScript
+   25  cd miScript/
+   26  sudo vim actualiza_web.sh
+   27  sudo chmod +x /etc/miScript/actualiza_web.sh
+   28  nohup /usr/local/bin/actualiza_web.sh & 
+   29  nohup /etc/miScript/actualiza_web.sh & 
+   30  cd ..
+   31  cd miWeb/
+   32  sudo python3 -m http.server 80
+   33  cd ..
+   34  cd miScript/
+   35  ls
+   36  sudo vim actualiza_web.sh 
+   37  cd ..
+   38  cd miWeb/
+   39  ls
+   40  sudo vim index.html 
+   41  nohup /etc/miScript/actualiza_web.sh & 
+   42  ps aux | grep actualiza_web.ssh
+   44  sudo kill 2913
+   45  sudo kill 2714
+   46  sudo kill 2820
+   47  nohup /etc/miScript/actualiza_web.sh & 
+   48  sudo python3 -m http.server 80
+   49  sudo vim index.html 
+   50  sudo python3 -m http.server 80
+   51  sudo vim index.html 
+   52  sudo vim /etc/miScript/actualiza_web.sh 
+   53  bash actualiza_web_una_vez.sh
+   54  bash /etc/miScript/actualiza_web.sh
+   55  sudo bash /etc/miScript/actualiza_web.sh
+   56  sudo vim /etc/miScript/actualiza_web.sh 
+   57  sudo vim index.html 
+   58  ls
+   59  cat index.html 
+   60  sudo cat index.html 
+   61  sudo bash /etc/miScript/actualiza_web.sh
+
+//////////////// 3 MAQUINA VIRTUAL: ////////////////
+  326  apt update
+  327  sudo apt update
+  328  sudo apt install nfs-kernel-server nfs-common
+  333  sudo mkdir /etc/datosNfs
+  334  sudo vim /etc/exports 
+  335  sudo chown nobody:nogroup /etc/datosNfs/
+  336  sudo exportfs 
+  337  sudo exportfs -v
+  338  sudo exportfs -ra
+  339  sudo vim /etc/exports 
+  340  sudo exportfs -v
+  341  sudo exportfs -ra
+  344  sudo service nfs-kernel-server restart
+  346  cd /etc/datosNfs/
+  348  sudo vim h.txt
+  350  cd /etc/datosNfs/
+  352  sudo vim h.txt 
+  353  sudo vim /etc/exports 
+  355  sudo exportfs -ra
+  356  sudo exportfs -v
+  357  sudo service nfs-kernel-server restart
+  372  cd datosNfs/
+  373  ls
+  374  cat HistoricoTemperatura.txt 
+  375  cat .bash_history 
+  376  sudo vim .bashrc
+  377  cat .bash_history 
+  378  source .bashrc
+  381  cat .bash_history 
+
+//////////////// 1 MAQUINA VIRTUAL: //////////////// 
+sudo apt update
+sudo apt install python3 python3-pip -y
+pip3 install paho-mqtt
+vim script.sh
+//////////script:///////
+import random
+from datetime import datetime
+import paho.mqtt.client as mqtt
+
+# === Configuración del broker ===
+broker_ip = '....'  # <-- Cambiar por la IP real de la MV2
+broker_port = 1883
+mqtt_user = 'sensor'
+mqtt_password = '1234'  # <-- Cambiar por la contraseña real
+
+# === Generar datos ===
+temperatura = round(random.uniform(10.0, 24.0), 1)
+timestamp = datetime.now().isoformat()
+payload = f"{timestamp} - {temperatura}°C"
+
+# === Enviar al broker ===
+client = mqtt.Client()
+client.username_pw_set(mqtt_user, mqtt_password)
+
+try:
+    client.connect(broker_ip, broker_port)
+    client.publish("campo/temperatura", payload)
+    client.disconnect()
+    print(f"Enviado: {payload}")
+except Exception as e:
+    print(f"Error al conectar con el broker: {e}")
+
+python3 /home/usuario/publicador_temperatura.py
+crontab -e
+
+INSERTAR EN CRONTAB:
+* * * * * /usr/bin/python3 /home/usuario/publicador_temperatura.py >> /home/usuario/temperatura.log 2>&1
+
+//////////////// 2 MAQUINA VIRTUAL: ////////////////
+sudo apt update
+sudo apt install mosquitto mosquitto-clients -y
+sudo mosquitto_passwd -c /etc/mosquitto/passwd sensor
+sudo vim /etc/mosquitto/acl
+--> EL ARCHIVO ACL:
+user sensor
+topic write campo/temperatura
+------------------------------- EDITAR EL CONF PARA LA CONEXION Y ACCESO
+sudo nano /etc/mosquitto/mosquitto.conf
+
+--> EL ARCHIVO CONF:
+# Puerto por defecto
+listener 1883
+
+# No permitir conexiones anónimas
+allow_anonymous false
+
+# Autenticación
+password_file /etc/mosquitto/passwd
+
+# Control de acceso
+acl_file /etc/mosquitto/acl
+------------------------------- ACTIVAR LA CARPETA REMOTA NFS
+sudo systemctl restart mosquitto
+sudo systemctl enable mosquitto
+sudo apt install nfs-common -y
+sudo mkdir -p /tmp/carpetaRemota
+sudo mount 192.168.1.103:/datosNfs /tmp/carpetaRemota
+--------------------------------  SCRIPT GUARDAR_TEMPERATURA.SH
+sudo vim guardar_temperatura.sh
+EL ARCHIVO .SH:
+#!/bin/bash
+
+# Parámetros del broker
+BROKER="localhost"
+TOPIC="campo/temperatura"
+USUARIO="sensor"
+CLAVE="1234"
+DESTINO="/tmp/carpetaRemota/HistoricoTemperatura.txt"
+
+# Suscribirse y guardar mensajes
+mosquitto_sub -h $BROKER -t $TOPIC -u $USUARIO -P $CLAVE | while read linea; do
+    echo "$linea" >> "$DESTINO"
+done
+--------------------------------- SEGUNDO PLANO
+chmod +x /home/usuario/guardar_temperatura.sh
+nohup /home/usuario/guardar_temperatura.sh > /dev/null 2>&1 &
+

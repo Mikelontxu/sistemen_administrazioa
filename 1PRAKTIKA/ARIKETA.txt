@@ -1,0 +1,67 @@
+//////////////// 1.2 ATALA: //////////////// 
+//////////////// 1 ARIKETA: //////////////// 
+  392  mkdir ~/AS
+//////////////// 2 ARIKETA: //////////////// 
+  393  ls
+  394  cd AS
+  395  echo $PWS
+  396  echo $PWD
+  397  echo $PATH
+  398  echo $HOME
+  399  echo $TERM
+  400  echo $SHELL
+//////////////// 3 ARIKETA: //////////////// 
+  401  apt install ncal
+  402  sudo apt install ncal
+  403  cal
+  404  cal > calendario.txt
+  405  cat calendario.txt 
+//////////////// 4 ARIKETA: //////////////// 
+  407  cp calendario.txt ~/
+  408  cd
+  409  ls
+//////////////// 5 ARIKETA: ////////////////
+  414  ls -l
+  415  ls -l > info.txt
+  416  cat info.txt
+//////////////// 6 ARIKETA: ////////////////
+  454  ls -th
+  455  find /etc
+  456  find /etc -maxdepth 1
+  457  find /etc -maxdepth 1 -type f
+  458  find /etc -maxdepth 1 -type f -printf "%T@ %p\n"
+  459  find /etc -maxdepth 1 -type f -printf "%T@ %p\n" | sort -n -r
+  460  find /etc -maxdepth 1 -type f -printf "%T@ %p\n" | sort -n -r | head -n 5
+//////////////// 7 ARIKETA: ////////////////
+  467  chmod 600 calendario.txt 
+  468  ls -l calendario.txt 
+//////////////// 8 ARIKETA: ////////////////
+  470  ls -ld $HOME
+  471  echo $HOME
+  472  chmod 700 $HOME
+  473  ls -ld $HOME
+//////////////// 9 ARIKETA: ////////////////
+  475  cut -d: -f1 /etc/passwd
+  476  grep -E '/bin/bash|/bin/zsh|/bin/sh' /etc/passwd | cut -d: -f1
+  477  echo $SHELL
+//////////////// 10 ARIKETA: ////////////////
+  479  last -i $USER
+  480  last -i
+  481  last -i $USER | head -n 1
+//////////////// 11 ARIKETA: ////////////////
+  506  tar -czvf home_backup.tgz -C $HOME .
+  507  ls
+  508  mkdir /tmp/prueba_home
+  509  tar -xzvf ~/home_backup.tgz -C /tmp/prueba_home
+  510  cd /tmp/prueba_home/
+  511  ls
+//////////////// 12 ARIKETA: ////////////////
+  515  whoami
+  516  sudo -i
+    1  find / -user mikel -exec ls -ld {} \; 2>/dev/null
+    4  exit
+//////////////// 13 ARIKETA: ////////////////
+  517  history
+    5  tail -n 30 /var/log/syslog
+    6  exit
+

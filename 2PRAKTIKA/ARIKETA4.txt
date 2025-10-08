@@ -1,0 +1,38 @@
+////////////// 1 ARIKETA //////////////
+  794  lsblk -e7
+////////////// 2 ARIKETA //////////////
+  794  lsblk -e7
+////////////// 3 ARIKETA //////////////
+  795  sudo apt update
+  798  sudo apt install rsnapshot -y
+////////////// 4 ARIKETA //////////////
+  799  sudo vim /etc/rsnapshot.conf
+TABULADORES USAR:
+snapshot_root   /backups/
+
+interval        horaria  24
+interval        diaria   7
+interval        semanal  4
+
+backup  /home/         localhost/home/
+backup  /etc/          localhost/etc/
+backup  /var/log/      localhost/var_log/
+
+////////////// 5 ARIKETA //////////////
+  800  sudo rsnapshot configtest
+  801  sudo vim /etc/rsnapshot.conf
+  802  sudo rsnapshot configtest
+  803  sudo rsnapshot configtest
+  804  sudo vim /etc/rsnapshot.conf
+  805  sudo rsnapshot configtest
+////////////// 6 ARIKETA //////////////
+  806  sudo rsnapshot horaria
+////////////// 7 ARIKETA //////////////
+  808  mkdir -p /home/mikel/prueba_backup
+  809  echo "Este es un archivo de prueba para rsnapshot." > /home/mikel/prueba_backup/test.txt
+  811  cat /home/mikel/prueba_backup/test.txt
+  812  sudo rsnapshot horaria
+  813  ls /backups/horaria.0/home/mikel/prueba_backup/
+////////////// 8 ARIKETA //////////////
+  816  sudo rsnapshot-diff /backups/horaria.1/ /backups/horaria.0/
+

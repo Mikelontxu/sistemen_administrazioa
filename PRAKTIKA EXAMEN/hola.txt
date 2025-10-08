@@ -1,0 +1,22 @@
+MOSQUITO PUBLISHER:
+ 2015  mosquitto_pub -h 34.51.176.148 -t "ciudades/bizkaia" -m "Bilbao"
+ 2016  mosquitto_pub -h 34.51.176.148 -t "ciudades/gipuzkoa" -m "Donostia"
+ 2017  mosquitto_pub -h 34.51.176.148 -t "ciudades/gasteiz" -m "Gasteiz" -r
+
+MOSQUITO SUBSCRIBER:
+  821  sudo systemctl start mosquitto
+  822  sudo systemctl enable mosquitto
+  823  mosquitto_sub -t "ciudades/bizkaia"
+  824  mosquitto_sub -t "ciudades/#"
+
+
+CONFIG:
+# Place your local configuration in /etc/mosquitto/conf.d/
+...
+log_dest file /var/log/mosquitto/mosquitto.log
+include_dir /etc/mosquitto/conf.d
+
+ñadir las siguientes líneas para:
+• Permitir conexiones al puerto 1883 desde fuera del servidor
+listener 1883 0.0.0.0
+allow_anonymous true
